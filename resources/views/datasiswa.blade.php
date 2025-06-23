@@ -22,10 +22,10 @@
             class="border border-gray-300 dark:border-gray-600 rounded px-3 py-2 w-60 focus:outline-none focus:ring-2 focus:ring-indigo-600 dark:bg-gray-700 dark:text-gray-200" />
     </section>
 
-    <div id="student-data-printable-content" class="p-4 bg-white dark:bg-gray-800 rounded-lg shadow-sm">
+    <div id="student-data-printable-content" class="p-4 bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-x-auto">
         <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4">Daftar Siswa</h2>
         <table
-            class="min-w-full border border-gray-300 dark:border-gray-600 border-collapse rounded-md overflow-hidden">
+            class="min-w-full table-auto text-sm sm:text-base border-collapse border border-gray-300 dark:border-gray-600">
             <thead class="bg-indigo-600 text-white text-left">
                 <tr>
                     <th class="px-4 py-2 border border-gray-300 dark:border-gray-600">No</th>
@@ -36,7 +36,7 @@
                     <th class="px-4 py-2 border border-gray-300 dark:border-gray-600">Tanggal Lahir</th>
                     <th class="px-4 py-2 border border-gray-300 dark:border-gray-600">Kelas</th>
                     <th class="px-4 py-2 border border-gray-300 dark:border-gray-600">Telp Ortu</th>
-                    <th class="px-4 py-2 border border-gray-300 dark:border-gray-600">Alamat</th>
+                    <th class="px-3 py-2 border hidden sm:table-cell">Alamat</th>
                     <th class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-center print:hidden">Aksi</th>
                 </tr>
             </thead>
@@ -51,7 +51,7 @@
                     <td class="px-4 py-2 border">{{ $row->tanggal_lahir }}</td>
                     <td class="px-4 py-2 border">{{ $row->kelas }}</td>
                     <td class="px-4 py-2 border">{{ $row->No_tlpOrtu }}</td>
-                    <td class="px-4 py-2 border">{{ $row->alamat }}</td>
+                    <td class="px-3 py-2 border hidden sm:table-cell">{{ $row->alamat }}</td>
                     <td class="px-4 py-2 border text-center print:hidden">  
                         <div class="flex items-center justify-center space-x-3">
                             <button class="edit-btn text-blue-600 flex items-center gap-1 hover:underline" data-id="{{ $row->id }}">
@@ -80,7 +80,7 @@
 <div id="studentModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
     <div class="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md max-h-screen overflow-y-auto">
         <h2 class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200" id="modalTitle">Tambah Siswa</h2>
-        <form id="studentForm" class="space-y-4">
+        <form id="studentForm" class="space-y-4 overflow-y-auto max-h-[70vh]">
             @csrf
             <div>
                 <label for="studentNISN" class="block font-semibold mb-1 text-gray-800 dark:text-gray-200">NISN</label>
@@ -345,7 +345,7 @@ printDataBtn.addEventListener('click', () => {
         overflow: visible;
     }
 
-    #teacher-data-printable-content {
+    #student-data-printable-content {
         width: 100% !important;
         overflow: visible !important;
         box-shadow: none !important;
@@ -359,6 +359,26 @@ printDataBtn.addEventListener('click', () => {
 
     th, td {
         word-break: break-word;
+    }
+}
+
+@media (max-width: 640px) {
+    table {
+        font-size: 14px;
+    }
+
+    th, td {
+        padding: 0.5rem;
+    }
+
+    /* Sembunyikan kolom alamat di layar kecil */
+    th:nth-child(9), td:nth-child(9) {
+        display: none;
+    }
+
+    /* Jadikan input lebih nyaman di modal */
+    #studentModal input, #studentModal select {
+        font-size: 16px;
     }
 }
 </style>
