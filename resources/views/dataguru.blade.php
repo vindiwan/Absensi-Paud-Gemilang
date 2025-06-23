@@ -72,19 +72,15 @@
 
 <!-- Modal Tambah Guru -->
 <div id="teacherModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
-    <div class="bg-white dark:bg-gray-800 rounded-lg p-6 w-96">
-        <h2 class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200" id="modalTitle">Tambah Guru</h2>
-        <form id="teacherForm" class="space-y-4">
+    <div class="bg-white dark:bg-gray-800 rounded-lg w-full max-w-md max-h-[90vh] overflow-hidden flex flex-col">
+        <div class="overflow-y-auto px-6 py-4 space-y-4 flex-1">
+            <h2 class="text-xl font-semibold mb-2 text-gray-800 dark:text-gray-200" id="modalTitle">Tambah Guru</h2>
+            <form id="teacherForm" class="space-y-4">
             @csrf
             <div>
                 <label for="teacherName" class="block font-semibold mb-1 text-gray-800 dark:text-gray-200">Nama
                     Guru</label>
                 <input type="text" id="teacherName"
-                    class="border border-gray-300 dark:border-gray-600 rounded px-3 py-2 w-full" required />
-            </div>
-            <div>
-                <label for="teacherUsername" class="block font-semibold mb-1 text-gray-800 dark:text-gray-200">Username</label>
-                <input type="text" id="teacherUsername"
                     class="border border-gray-300 dark:border-gray-600 rounded px-3 py-2 w-full" required />
             </div>
             <div>
@@ -114,6 +110,19 @@
                     class="block font-semibold mb-1 text-gray-800 dark:text-gray-200">Alamat</label>
                 <input type="text" id="teacherAddress"
                     class="border border-gray-300 dark:border-gray-600 rounded px-3 py-2 w-full" required />
+            <div>
+                <label for="teacherUsername" class="block font-semibold mb-1 text-gray-800 dark:text-gray-200">Username</label>
+                <input type="text" id="teacherUsername"
+                    class="border border-gray-300 dark:border-gray-600 rounded px-3 py-2 w-full" required />
+            </div>
+            <div id="passwordFieldWrapper">
+                <label for="teacherPassword" class="block font-semibold mb-1 text-gray-800 dark:text-gray-200">Password</label>
+                <input type="password" id="teacherPassword"
+                    class="border border-gray-300 dark:border-gray-600 rounded px-3 py-2 w-full"/>
+            </div>
+            <button type="button" id="togglePasswordField" class="text-sm text-blue-600 hover:underline hidden">
+                Ubah Password
+            </button>
             </div>
             <div class="flex justify-end gap-3 mt-6">
                 <button type="button" id="cancelBtn"
@@ -144,6 +153,7 @@
 <script src="https://unpkg.com/feather-icons"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script>
+const passwordWrapper = document.getElementById('passwordFieldWrapper');
 const addTeacherBtn = document.getElementById('addTeacherBtn');
 const printDataBtn = document.getElementById('printDataBtn');
 const teacherModal = document.getElementById('teacherModal');
@@ -151,6 +161,8 @@ const cancelBtn = document.getElementById('cancelBtn');
 const teacherForm = document.getElementById('teacherForm');
 const teacherTableBody = document.getElementById('teacherTableBody');
 const modalTitle = document.getElementById('modalTitle');
+const togglePasswordBtn = document.getElementById('togglePasswordField');
+
 
 // Info modal helper
 const infoModalElements = {
@@ -171,7 +183,13 @@ addTeacherBtn.addEventListener('click', () => {
     teacherModal.classList.remove('hidden');
     teacherForm.reset();
     modalTitle.textContent = 'Tambah Guru';
+
+    passwordWrapper.classList.remove('hidden');
+    togglePasswordBtn.classList.add('hidden'); // Sembunyikan tombol ubah password
+    teacherForm.teacherPassword.required = true;
+    delete teacherForm.dataset.editId;
 });
+
 cancelBtn.addEventListener('click', () => {
     teacherModal.classList.add('hidden');
     teacherForm.reset();
@@ -206,7 +224,8 @@ teacherForm.addEventListener('submit', (e) => {
                 email,
                 birthDate,
                 education,
-                address
+                address,
+                password: teacherForm.teacherPassword.value.trim()
             })
         })
         .then(response => {
@@ -277,7 +296,13 @@ document.addEventListener('click', function (e) {
                 teacherForm.teacherBirthDate.value = g.tanggal_lahir;
                 teacherForm.teacherEducation.value = g.Pendidikan;
                 teacherForm.teacherAddress.value = g.alamat;
+                teacherForm.dataset.editId = id;
+                modalTitle.textContent = 'Edit Guru';
+                teacherModal.classList.remove('hidden');
 
+                passwordWrapper.classList.add('hidden'); // Sembunyikan field password saat edit
+                teacherForm.teacherPassword.required = false;
+                togglePasswordBtn.classList.remove('hidden');
                 teacherForm.dataset.editId = id;
                 modalTitle.textContent = 'Edit Guru';
                 teacherModal.classList.remove('hidden');
@@ -305,6 +330,11 @@ document.addEventListener('click', function (e) {
 
 feather.replace();
 
+togglePasswordBtn.addEventListener('click', () => {
+    passwordWrapper.classList.remove('hidden');
+    teacherForm.teacherPassword.required = true;
+    togglePasswordBtn.classList.add('hidden');
+});
 
 </script>
 <style>
