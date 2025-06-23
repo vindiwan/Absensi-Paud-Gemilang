@@ -24,6 +24,7 @@ class GuruController extends Controller
             'birthDate'     => 'required|date',
             'education'     => 'required|string',
             'address'       => 'required|string',
+            'password'      => 'required|string|min:6',
         ]);
 
         if ($validator->fails()) {
@@ -71,6 +72,7 @@ class GuruController extends Controller
             'birthDate'=> 'required|date',
             'education'=> 'required|string',
             'address'  => 'required|string',
+            'password'  => 'nullable|string|min:6'
         ]);
 
         if ($validator->fails()) {
@@ -80,7 +82,7 @@ class GuruController extends Controller
             ], 422);
         }
 
-        DB::table('users_guru')->where('id', $id)->update([
+         $data = [
             'username'      => $request->username,
             'nama_lengkap'  => $request->name,
             'NIP'           => $request->nip,
@@ -89,7 +91,13 @@ class GuruController extends Controller
             'Pendidikan'    => $request->education,
             'alamat'        => $request->address,
             'updated_at'    => now()
-        ]);
+        ];
+
+        if ($request->filled('password')) {
+            $data['password'] = bcrypt($request->password);
+        }
+
+        DB::table('users_guru')->where('id', $id)->update($data);
 
         $updated = DB::table('users_guru')->where('id', $id)->first();
 
